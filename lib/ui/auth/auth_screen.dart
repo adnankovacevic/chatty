@@ -1,8 +1,8 @@
 import 'package:auto24/config/app_colors.dart';
+import 'package:auto24/models/user.dart';
 import 'package:auto24/services/auth_service.dart';
 import 'package:auto24/ui/home/home_screen.dart';
 import 'package:auto24/widgets/primary_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -46,8 +46,7 @@ class AuthScreen extends StatelessWidget {
               imageAsset: 'assets/google_icon.svg',
               onPressed: () async {
                 AuthService authService = AuthService();
-                UserCredential? userCredential =
-                    await authService.signInWithGoogle();
+                ChatUser? userCredential = await authService.signInWithGoogle();
 
                 if (userCredential != null) {
                   // Sign-in successful, navigate to the next screen

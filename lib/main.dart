@@ -1,6 +1,6 @@
 import 'package:auto24/config/app_colors.dart';
 import 'package:auto24/notifier/theme_mode_notifier.dart';
-import 'package:auto24/ui/home/home_screen.dart';
+import 'package:auto24/ui/auth/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +24,7 @@ class MyApp extends ConsumerWidget {
       title: 'Messenger',
       theme:
           theme == ThemeModeState.dark ? AppThemes.dark() : AppThemes.light(),
-      home: const HomeScreen(),
+      home: const AuthScreen(),
     );
   }
 }

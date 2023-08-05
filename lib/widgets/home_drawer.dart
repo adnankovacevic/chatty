@@ -1,11 +1,21 @@
+import 'package:auto24/models/user.dart';
+import 'package:auto24/notifier/user_notifier.dart';
+import 'package:auto24/ui/auth/auth_screen.dart';
+import 'package:auto24/widgets/avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeDrawer extends StatelessWidget {
-  const HomeDrawer({super.key});
-
+class HomeDrawer extends ConsumerWidget {
+  const HomeDrawer({
+    super.key,
+    required this.user,
+  });
+  final ChatUser? user;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final logout = ref.watch(authServiceProvider);
+
     return Drawer(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       child: ListView(
@@ -15,30 +25,36 @@ class HomeDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
             ),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text('Drawer Header'),
-                Icon(Icons.light_mode_sharp),
+                Avatar.large(url: user?.profilePicture ?? ''),
+                const SizedBox(width: 20),
+                Text(user?.name ?? ''),
               ],
             ),
           ),
           ListTile(
+            leading: const Icon(Icons.logout),
             title: Text(
-              'Item 1',
-              style: GoogleFonts.lato(color: Colors.black),
+              'Logout',
+              style: GoogleFonts.lato(),
             ),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-            },
-          ),
-          ListTile(
-            title: const Text('Item 2'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
+            onTap: () async {
+              var isSuccessful = await logout.signOut();
+              if (isSuccessful != null) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (_, __, ___) => const AuthScreen(),
+                    transitionDuration: const Duration(milliseconds: 200),
+                    transitionsBuilder: (_, a, __, c) =>
+                        FadeTransition(opacity: a, child: c),
+                  ),
+                  (route) => false,
+                );
+              }
             },
           ),
         ],

@@ -1,9 +1,9 @@
+import 'package:auto24/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   // Sign up with email and password
   Future<User?> signUpWithEmailPassword(String email, String password) async {
     try {
@@ -33,43 +33,53 @@ class AuthService {
   }
 
   // Sign in with Google
-  Future<UserCredential?> signInWithGoogle() async {
+  Future<ChatUser?> signInWithGoogle() async {
     try {
-      // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      print('Google User: ${googleUser?.email}');
       if (googleUser == null) {
         print('Google Sign-In cancelled by the user.');
-        return null; // Or handle the cancellation scenario as needed.
+        return null;
       }
 
-      // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-      print('Google User: ${googleAuth.idToken}');
 
-      // Create a new credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // Once signed in, return the UserCredential
-      return await _auth.signInWithCredential(credential);
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+
+      String userId = userCredential.user!.uid;
+      String name = userCredential.user!.displayName ?? '';
+      String email = userCredential.user!.email ?? '';
+      String profilePicture = userCredential.user!.photoURL ?? '';
+
+      ChatUser user = ChatUser(
+        id: userId,
+        name: name,
+        email: email,
+        profilePicture: profilePicture,
+      );
+
+      return user;
     } catch (e) {
-      // Handle any errors that might occur during the sign-in process
       print('Error signing in with Google: $e');
-      return null; // Or handle the error scenario as needed.
+      return null;
     }
   }
 
   // Sign out
-  Future<void> signOut() async {
+  Future<bool> signOut() async {
     try {
       await _auth.signOut();
       print("Sign-out successful!");
+      return true;
     } catch (error) {
       print("Sign out error: $error");
+      return false;
     }
   }
 }

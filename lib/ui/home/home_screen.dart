@@ -2,6 +2,7 @@ import 'package:auto24/config/app_colors.dart';
 import 'package:auto24/config/helpers.dart';
 import 'package:auto24/notifier/selected_index_notifier.dart';
 import 'package:auto24/notifier/theme_mode_notifier.dart';
+import 'package:auto24/notifier/user_notifier.dart';
 import 'package:auto24/ui/pages/mentions_page.dart';
 import 'package:auto24/ui/pages/messages/messages_page.dart';
 import 'package:auto24/widgets/avatar.dart';
@@ -23,12 +24,16 @@ class HomeScreen extends ConsumerWidget {
     final pageIndex = ref.watch(selectedIndexProvider);
     final pageTitle = pageTitles[pageIndex];
     final theme = ref.watch(themeNotifierProvider);
+    final user = ref.watch(signInWithGoogleProvider);
+
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
       drawerEnableOpenDragGesture: false,
       key: scaffoldKey,
-      drawer: const HomeDrawer(),
+      drawer: HomeDrawer(
+        user: user.value,
+      ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
